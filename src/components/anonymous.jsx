@@ -11,6 +11,8 @@ import Colors from '../colors';
 import { AuthAppleIcon, AuthGithubIcon, AuthGoogleIcon } from '../icons';
 import { stringifyQuery } from '../utils/query';
 
+const AUTH_PROVIDERS = { GOOGLE: 'g', APPLE: 'a', GITHUB: 'h' };
+
 const styles = () => ({
   baseContainer: {
     width: '100%',
@@ -64,7 +66,6 @@ const styles = () => ({
     background: '#ffffff',
     display: 'flex',
     borderRadius: 80,
-    fontSize: 21,
     height: 80,
     justifyContent: 'center',
     textDecoration: 'none',
@@ -75,12 +76,26 @@ const styles = () => ({
       background: '#eee',
     },
   },
+  lastUsed: {
+    display: 'inline-block',
+    marginLeft: 6,
+    background: '#b6d0e2',
+    borderRadius: 4,
+    padding: '6px',
+    fontSize: 12,
+    lineHeight: '14px',
+    verticalAlign: 'middle',
+    '@media (max-width: 480px)': {
+      fontSize: 10,
+    },
+  },
   buttonText: {
     fontSize: 18,
     width: 190,
     textAlign: 'center',
     color: 'black',
     fontWeight: 600,
+    whiteSpace: 'nowrap',
   },
   buttonImage: {
     height: 40,
@@ -122,6 +137,7 @@ class AnonymousLanding extends Component {
 
   render() {
     const { classes } = this.props;
+    const lastLoginProvider = localStorage.getItem('lastLoginProvider');
 
     return (
       <div className={classes.baseContainer}>
@@ -136,15 +152,24 @@ class AnonymousLanding extends Component {
           </Typography>
           <a href={AuthConfig.GOOGLE_REDIRECT_LINK} className={classes.logInButton}>
             <img className={classes.buttonImage} src={AuthGoogleIcon} alt="" />
-            <Typography className={classes.buttonText}>Sign in with Google</Typography>
+            <Typography className={classes.buttonText}>
+              Sign in with Google
+              {lastLoginProvider === AUTH_PROVIDERS.GOOGLE && <span className={classes.lastUsed}>Last used</span>}
+            </Typography>
           </a>
           <a onClick={() => AppleID.auth.signIn()} className={classes.logInButton}>
             <img className={classes.buttonImage} src={AuthAppleIcon} alt="" />
-            <Typography className={classes.buttonText}>Sign in with Apple</Typography>
+            <Typography className={classes.buttonText}>
+              Sign in with Apple
+              {lastLoginProvider === AUTH_PROVIDERS.APPLE && <span className={classes.lastUsed}>Last used</span>}
+            </Typography>
           </a>
           <a href={AuthConfig.GITHUB_REDIRECT_LINK} className={`${classes.logInButton} githubAuth`}>
             <img className={classes.buttonImage} src={AuthGithubIcon} alt="" />
-            <Typography className={classes.buttonText}>Sign in with GitHub</Typography>
+            <Typography className={classes.buttonText}>
+              Sign in with GitHub
+              {lastLoginProvider === AUTH_PROVIDERS.GITHUB && <span className={classes.lastUsed}>Last used</span>}
+            </Typography>
           </a>
 
           <span className="max-w-sm text-center mt-2 mb-8 text-sm">
