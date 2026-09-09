@@ -180,7 +180,7 @@ export default function Referrals({ profile }) {
       </section>
 
       <section className="relative mt-6">
-        {!limitReached ? (
+        {limitReached ? (
           <div className="rounded-[14px] bg-white/5 p-4 text-center">
             <p>
               Referral limit reached. Read{' '}
