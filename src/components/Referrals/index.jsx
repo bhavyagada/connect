@@ -37,6 +37,7 @@ export default function Referrals({ profile }) {
   const claimOpeningTimer = useRef(null);
   const shareStatusTimer = useRef(null);
   const shareUrl = summary ? referralUrl(REFERRAL_URL, summary.code) : null;
+  const limitReached = summary?.limit_reached;
 
   useEffect(() => () => {
     window.clearTimeout(claimOpeningTimer.current);
@@ -179,7 +180,22 @@ export default function Referrals({ profile }) {
       </section>
 
       <section className="relative mt-6">
-        {!error && (
+        {!limitReached ? (
+          <div className="rounded-[14px] bg-white/5 p-4 text-center">
+            <p>
+              Referral limit reached. Read{' '}
+              <a
+                href="https://comma.ai/terms#referral-terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-inherit underline underline-offset-2"
+              >
+                terms
+              </a>{' '}
+              for more details.
+            </p>
+          </div>
+        ) : !error && (
           <div className={!summary ? 'invisible pointer-events-none' : ''} aria-hidden={!summary || undefined}>
             <button
               type="button"
