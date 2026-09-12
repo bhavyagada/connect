@@ -8,36 +8,6 @@ import Colors from '../../colors';
 import { selectTimeFilter } from '../../actions';
 
 const styles = (theme) => ({
-  modalContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  modal: {
-    padding: theme.spacing.unit * 2,
-    width: theme.spacing.unit * 42,
-    maxWidth: '90%',
-    outline: 'none',
-  },
-  buttonGroup: {
-    marginTop: 20,
-    textAlign: 'right',
-  },
-  datePickerContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  dateField: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 6,
-    width: 135,
-  },
-  dateInput: {
-    width: '100%',
-    boxSizing: 'border-box',
-  },
   cancelButton: {
     backgroundColor: Colors.grey200,
     color: Colors.white,
@@ -90,14 +60,14 @@ const TimeSelect = (props) => {
     <Modal
       open
       onClose={onClose}
-      className={classes.modalContainer}
+      className="flex items-center justify-center"
     >
-      <Paper className={classes.modal}>
-        <div className={classes.datePickerContainer}>
-          <div className={classes.dateField}>
+      <Paper className="w-84 max-w-sm p-4 outline-none">
+        <div className="flex justify-between mb-5">
+          <div className="flex w-34 flex-col gap-1.5">
             <Typography variant="body2">Start date:</Typography>
             <input
-              className={classes.dateInput}
+              className="w-full box-border"
               type="date"
               min={minDate}
               max={maxDate}
@@ -105,10 +75,10 @@ const TimeSelect = (props) => {
               value={start}
             />
           </div>
-          <div className={classes.dateField}>
+          <div className="flex w-34 flex-col gap-1.5">
             <Typography variant="body2">End date:</Typography>
             <input
-              className={classes.dateInput}
+              className="w-full box-border"
               type="date"
               min={start}
               max={maxDate}
@@ -118,11 +88,10 @@ const TimeSelect = (props) => {
           </div>
         </div>
         <Divider />
-        <div className={classes.buttonGroup}>
+        <div className="mt-5 flex justify-end gap-2">
           <Button variant="contained" className={classes.cancelButton} onClick={onClose}>
             Cancel
           </Button>
-          &nbsp;
           <Button variant="contained" className={classes.saveButton} onClick={handleSave}>
             Save
           </Button>
