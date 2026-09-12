@@ -498,7 +498,7 @@ export function selectTimeFilter(start, end) {
 
     dispatch({
       type: Types.ACTION_UPDATE_ROUTE_LIMIT,
-      limit: undefined,
+      limit: LIMIT_INCREMENT,
     })
 
     dispatch(checkRoutesData());
