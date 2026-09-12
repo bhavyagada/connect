@@ -3,12 +3,10 @@ import { getDongleID, getSegmentRange, getPrimeNav, getStreamNav } from './url';
 const FIVE_YEARS = 5 * 365 * 24 * 60 * 60 * 1000;
 
 export function getDefaultFilter() {
-  const d = new Date();
-  const end = d.setHours(d.getHours() + 1, 0, 0, 0);
-  const start = end - FIVE_YEARS;
+  const end = new Date().setMinutes(60, 0, 0); // next hour
 
   return {
-    start,
+    start: end - FIVE_YEARS,
     end
   };
 }

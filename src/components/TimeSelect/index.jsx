@@ -71,7 +71,7 @@ const TimeSelect = ({ classes, onClose, filter, dispatch }) => {
 
   return (
     <Modal open onClose={onClose} className="flex items-center justify-center">
-      <Paper className="w-84 max-w-sm p-4 outline-none">
+      <Paper className="w-84 max-w-[90%] p-4 outline-none">
         <div className="flex justify-between mb-5">
           <div className="flex w-34 flex-col gap-1.5">
             <Typography variant="body2">Start date:</Typography>
