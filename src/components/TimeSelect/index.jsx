@@ -24,9 +24,7 @@ const styles = (theme) => ({
   },
 });
 
-const TimeSelect = (props) => {
-  const { classes, onClose, filter, dispatch } = props;
-
+const TimeSelect = ({ classes, onClose, filter, dispatch }) => {
   const [start, setStart] = useState(dayjs(filter.start).format('YYYY-MM-DD'));
   const [end, setEnd] = useState(dayjs(filter.end).format('YYYY-MM-DD'));
 
