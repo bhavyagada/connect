@@ -299,7 +299,7 @@ export function selectDevice(dongleId, allowPathChange = true, fetchRoutes = tru
     }
 
     if (fetchRoutes) {
-      dispatch(checkRoutesData());
+      dispatch(checkLastRoutesData());
     }
 
     if (allowPathChange) {
