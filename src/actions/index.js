@@ -30,7 +30,7 @@ export function checkRoutesData() {
       return routesRequestPromise;
     }
     console.debug('We need to update the segment metadata...');
-    const { dongleId } = state;
+    const { dongleId, limit: fetchLimit } = state;
     const fetchRange = state.filter;
 
     // if requested segment range not in loaded routes, fetch it explicitly
@@ -41,7 +41,7 @@ export function checkRoutesData() {
       };
     } else {
       routesRequest = {
-        req: api.routes.getRoutesSegments(dongleId, fetchRange.start, fetchRange.end, state.limit),
+        req: api.routes.getRoutesSegments(dongleId, fetchRange.start, fetchRange.end, fetchLimit),
         dongleId,
       };
     }
@@ -51,6 +51,7 @@ export function checkRoutesData() {
       const currentRange = state.filter;
       if (currentRange.start !== fetchRange.start
         || currentRange.end !== fetchRange.end
+        || state.limit !== fetchLimit
         || state.dongleId !== dongleId) {
         routesRequest = null;
         dispatch(checkRoutesData());
