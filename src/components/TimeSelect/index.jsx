@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { connect } from 'react-redux';
-import dayjs from 'dayjs';
 
 import { Button, Divider, Modal, Paper, Typography, withStyles } from '@material-ui/core';
 
 import Colors from '../../colors';
 import { selectTimeFilter } from '../../actions';
 
-const styles = (theme) => ({
+const styles = {
   cancelButton: {
     backgroundColor: Colors.grey200,
     color: Colors.white,
@@ -22,11 +21,23 @@ const styles = (theme) => ({
       backgroundColor: Colors.white70,
     },
   },
-});
+};
+
+const formatDate = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const parseDate = (value) => {
+  const [year, month, day] = value.split('-').map(Number);
+  return new Date(year, month - 1, day);
+};
 
 const TimeSelect = ({ classes, onClose, filter, dispatch }) => {
-  const [start, setStart] = useState(dayjs(filter.start).format('YYYY-MM-DD'));
-  const [end, setEnd] = useState(dayjs(filter.end).format('YYYY-MM-DD'));
+  const [start, setStart] = useState(formatDate(new Date(filter.start)));
+  const [end, setEnd] = useState(formatDate(new Date(filter.end)));
 
   const changeStart = (event) => {
     if (event.target.value) {
@@ -45,21 +56,21 @@ const TimeSelect = ({ classes, onClose, filter, dispatch }) => {
 
   const handleSave = () => {
     dispatch(selectTimeFilter(
-      dayjs(start).startOf('day').valueOf(),
-      dayjs(end).endOf('day').valueOf(),
+      parseDate(start).setHours(0, 0, 0, 0),
+      parseDate(end).setHours(23, 59, 59, 999),
     ));
     onClose();
   };
 
-  const minDate = dayjs().subtract(365, 'day').format('YYYY-MM-DD');
-  const maxDate = dayjs().format('YYYY-MM-DD');
+  const max = new Date();
+  const min = new Date(max);
+  min.setDate(min.getDate() - 365);
+
+  const minDate = formatDate(min);
+  const maxDate = formatDate(max);
 
   return (
-    <Modal
-      open
-      onClose={onClose}
-      className="flex items-center justify-center"
-    >
+    <Modal open onClose={onClose} className="flex items-center justify-center">
       <Paper className="w-84 max-w-sm p-4 outline-none">
         <div className="flex justify-between mb-5">
           <div className="flex w-34 flex-col gap-1.5">
