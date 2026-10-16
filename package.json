@@ -31,7 +31,6 @@
     "@sentry/react": "^7.64.0",
     "@sentry/vite-plugin": "^2.7.0",
     "barcode-detector": "^3.0.8",
-    "connected-react-router": "^4.5.0",
     "dayjs": "^1.11.9",
     "history": "^4.10.1",
     "jwt-decode": "^3.1.2",
