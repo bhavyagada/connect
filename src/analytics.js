@@ -63,7 +63,7 @@ function getVideoPercent(state, offset) {
   return (offset - (zoom.start)) / (zoom.end - zoom.start);
 }
 
-function logAction(action, prevState, state, pathname) {
+function logAction(action, prevState, state) {
   if (MyCommaAuth.isAuthenticated() && !state.profile) { // no startup data yet
     return;
   }
@@ -115,7 +115,7 @@ function logAction(action, prevState, state, pathname) {
 
       gtag('event', 'page_view', {
         ...params,
-        page_location: getPageViewEventLocation(pathname),
+        page_location: getPageViewEventLocation(action.pathname),
       });
       return;
 
@@ -221,14 +221,14 @@ function logAction(action, prevState, state, pathname) {
   }
 }
 
-export function analyticsMiddleware(history) {
-  return ({ getState }) => (next) => (action) => {
+export function analyticsMiddleware({ getState }) {
+  return (next) => (action) => {
     const prevState = getState();
     const res = next(action);
     const state = getState();
 
     try {
-      logAction(action, prevState, state, history.location.pathname);
+      logAction(action, prevState, state);
     } catch (err) {
       Sentry.captureException(err, { fingerprint: 'analytics_middleware' });
     }
