@@ -1,7 +1,6 @@
 import React, { Component, lazy, Suspense } from 'react';
 import { Provider } from 'react-redux';
-import { Route, Switch, Redirect } from 'react-router-dom';
-import { ConnectedRouter } from 'connected-react-router';
+import { Route, Switch, Redirect, Router } from 'react-router-dom';
 import localforage from 'localforage';
 import * as Sentry from '@sentry/react';
 
@@ -9,6 +8,7 @@ import MyCommaAuth, { config as AuthConfig, storage as AuthStorage } from '@comm
 import { athena as Athena, billing as Billing, request as Request } from './api';
 import { api, initBackend } from './api/backend';
 
+import { trackPageView } from './analytics';
 import { parseURL } from './url';
 import { webrtcConnectionManager } from './utils/webrtc';
 import { fetchTurnCredentials } from './utils/turn';
@@ -87,6 +87,8 @@ class App extends Component {
       });
     }
 
+    const { store = defaultStore, history = defaultHistory } = this.props;
+    trackPageView(history.location.pathname, store.getState());
     this.setState({ initialized: true });
   }
 
@@ -146,9 +148,9 @@ class App extends Component {
 
     return (
       <Provider store={store}>
-        <ConnectedRouter history={history}>
+        <Router history={history}>
           {content}
-        </ConnectedRouter>
+        </Router>
       </Provider>
     );
   }

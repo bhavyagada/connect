@@ -1,4 +1,3 @@
-import { push } from 'connected-react-router';
 import * as Sentry from '@sentry/react';
 import { athena as Athena, billing as Billing } from '../api';
 import { api } from '../api/backend';
@@ -13,7 +12,7 @@ let routesRequestPromise = null;
 const LIMIT_INCREMENT = 5
 
 export function checkRoutesData() {
-  return (dispatch, getState) => {
+  return (dispatch, getState, history) => {
     let state = getState();
     if (!state.dongleId) {
       return;
@@ -57,7 +56,7 @@ export function checkRoutesData() {
       if (routesData && routesData.length === 0
         && !api.auth.isAuthenticated()) {
         routesRequest = null;
-        hardNavigate(`/?r=${encodeURI(state.router.location.pathname)}`); // redirect to login
+        hardNavigate(`/?r=${encodeURI(history.location.pathname)}`); // redirect to login
         return;
       }
 
@@ -139,13 +138,13 @@ export function checkLastRoutesData() {
   };
 }
 
-export const pushTimelineRange = (logId, start, end) => (dispatch, getState) => {
+export const pushTimelineRange = (logId, start, end) => (dispatch, getState, history) => {
   const state = getState();
   const selectedRoute = state.routes?.find((route) => route.log_id === logId);
   const wholeDrive = start == null || end == null || (start === 0 && end === selectedRoute?.duration);
   const range = wholeDrive ? '' : `/${start / 1000}/${end / 1000}`;
   const target = `/${state.dongleId}/${logId}${range}`;
-  if (state.router.location.pathname !== target) dispatch(push(target));
+  if (history.location.pathname !== target) history.push(target);
 }
 
 export function primeGetSubscription(dongleId, subscription) {
@@ -197,14 +196,14 @@ export function fetchDeviceOnline(dongleId) {
   };
 }
 
-export const navigateTo = (page, dongleId) => (dispatch, getState) => {
+export const navigateTo = (page, dongleId) => (dispatch, getState, history) => {
   const state = getState();
   const deviceId = dongleId || state.dongleId;
   if (!deviceId && page !== 'dashboard') return;
 
   const dashboardPath = deviceId ? `/${deviceId}` : '/';
   const target = page === 'dashboard' ? dashboardPath : `${dashboardPath}/${page}`;
-  if (state.router.location.pathname !== target) dispatch(push(target));
+  if (history.location.pathname !== target) history.push(target);
 }
 
 export function fetchSharedDevice(dongleId) {

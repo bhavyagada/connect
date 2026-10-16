@@ -1,4 +1,3 @@
-import { LOCATION_CHANGE } from 'connected-react-router';
 import * as Sentry from '@sentry/react';
 
 import MyCommaAuth from '@commaai/my-comma-auth';
@@ -15,6 +14,18 @@ function getPageViewEventLocation(pathname) {
   if (page === 'drive') return `/<dongleId>/${logId}${range ? '/<zoomStart>/<zoomEnd>' : ''}`;
   if (page === 'legacy-drive') return '/<dongleId>/<zoomStart>/<zoomEnd>';
   return `/<dongleId>/${page}`;
+}
+
+export function trackPageView(pathname, state) {
+  if (MyCommaAuth.isAuthenticated() && !state.profile) return;
+
+  try {
+    gtag('event', 'page_view', {
+      page_location: getPageViewEventLocation(pathname),
+    });
+  } catch (err) {
+    Sentry.captureException(err, { fingerprint: 'analytics_middleware' });
+  }
 }
 
 const clusterMap = {
@@ -52,7 +63,7 @@ function getVideoPercent(state, offset) {
   return (offset - (zoom.start)) / (zoom.end - zoom.start);
 }
 
-function logAction(action, prevState, state) {
+function logAction(action, prevState, state, pathname) {
   if (MyCommaAuth.isAuthenticated() && !state.profile) { // no startup data yet
     return;
   }
@@ -92,12 +103,6 @@ function logAction(action, prevState, state) {
 
   // eslint-disable-next-line default-case
   switch (action.type) {
-    case LOCATION_CHANGE:
-      gtag('event', 'page_view', {
-        page_location: getPageViewEventLocation(action.payload.location.pathname),
-      });
-      return;
-
     case Types.ACTION_STARTUP_DATA:
       gtag('set', {
         user_id: state.profile?.user_id,
@@ -110,7 +115,7 @@ function logAction(action, prevState, state) {
 
       gtag('event', 'page_view', {
         ...params,
-        page_location: getPageViewEventLocation(state.router.location.pathname),
+        page_location: getPageViewEventLocation(pathname),
       });
       return;
 
@@ -216,14 +221,14 @@ function logAction(action, prevState, state) {
   }
 }
 
-export function analyticsMiddleware({ getState }) {
-  return (next) => (action) => {
+export function analyticsMiddleware(history) {
+  return ({ getState }) => (next) => (action) => {
     const prevState = getState();
     const res = next(action);
     const state = getState();
 
     try {
-      logAction(action, prevState, state);
+      logAction(action, prevState, state, history.location.pathname);
     } catch (err) {
       Sentry.captureException(err, { fingerprint: 'analytics_middleware' });
     }
