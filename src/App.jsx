@@ -8,7 +8,7 @@ import MyCommaAuth, { config as AuthConfig, storage as AuthStorage } from '@comm
 import { athena as Athena, billing as Billing, request as Request } from './api';
 import { api, initBackend } from './api/backend';
 
-import { trackPageView } from './analytics';
+import { analyticsEvent } from './actions';
 import { parseURL } from './url';
 import { webrtcConnectionManager } from './utils/webrtc';
 import { fetchTurnCredentials } from './utils/turn';
@@ -88,7 +88,7 @@ class App extends Component {
     }
 
     const { store = defaultStore, history = defaultHistory } = this.props;
-    trackPageView(history.location.pathname, store.getState());
+    store.dispatch(analyticsEvent('page_view', { pathname: history.location.pathname }));
     this.setState({ initialized: true });
   }
 

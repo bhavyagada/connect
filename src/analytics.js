@@ -16,18 +16,6 @@ function getPageViewEventLocation(pathname) {
   return `/<dongleId>/${page}`;
 }
 
-export function trackPageView(pathname, state) {
-  if (MyCommaAuth.isAuthenticated() && !state.profile) return;
-
-  try {
-    gtag('event', 'page_view', {
-      page_location: getPageViewEventLocation(pathname),
-    });
-  } catch (err) {
-    Sentry.captureException(err, { fingerprint: 'analytics_middleware' });
-  }
-}
-
 const clusterMap = {
   s: 1000,
   m: 60000,
@@ -217,7 +205,13 @@ function logAction(action, prevState, state) {
       return;
 
     case Types.ANALYTICS_EVENT:
-      tag(action.name, action.parameters);
+      if (action.name === 'page_view') {
+        gtag('event', 'page_view', {
+          page_location: getPageViewEventLocation(action.parameters.pathname),
+        });
+      } else {
+        tag(action.name, action.parameters);
+      }
   }
 }
 

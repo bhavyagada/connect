@@ -5,7 +5,8 @@ import { createBrowserHistory } from 'history';
 import rootReducer from './reducers';
 import composeEnhancers from './devtools';
 import { syncStateFromURL } from './actions/history';
-import { analyticsMiddleware, trackPageView } from './analytics';
+import { analyticsEvent } from './actions';
+import { analyticsMiddleware } from './analytics';
 
 export const history = createBrowserHistory();
 
@@ -24,7 +25,7 @@ export function createAppStore(appHistory, preloadedState) {
     const pathnameChanged = pathname !== location.pathname;
     pathname = location.pathname;
 
-    trackPageView(location.pathname, store.getState());
+    store.dispatch(analyticsEvent('page_view', { pathname: location.pathname }));
     if (pathnameChanged) store.dispatch(syncStateFromURL());
   });
 
