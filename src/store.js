@@ -4,8 +4,8 @@ import { createBrowserHistory } from 'history';
 
 import rootReducer from './reducers';
 import composeEnhancers from './devtools';
-import { syncStateFromURL } from './actions/history';
 import { analyticsEvent } from './actions';
+import { syncStateFromURL } from './actions/history';
 import { analyticsMiddleware } from './analytics';
 
 export const history = createBrowserHistory();
