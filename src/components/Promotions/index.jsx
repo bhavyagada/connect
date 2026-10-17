@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { connect } from 'react-redux';
-import { push } from 'connected-react-router';
+import { useHistory } from 'react-router-dom';
 
 import { navigateTo } from '../../actions';
 import Notification from '../Notification';
@@ -9,6 +9,7 @@ import Notification from '../Notification';
 const REFERRAL_DISMISSAL_KEY = 'referrals-09-02-2026';
 
 const Promotions = ({ device, dispatch }) => {
+  const history = useHistory();
   const [showReferral, setShowReferral] = useState(
     () => window.localStorage.getItem(REFERRAL_DISMISSAL_KEY) !== 'true',
   );
@@ -29,7 +30,7 @@ const Promotions = ({ device, dispatch }) => {
           heading="Refer a friend. Get $50."
           subtitle="Earn $50 for each comma four purchased with your referral link."
           buttonText="refer"
-          onButtonClick={() => { dispatch(push('/referrals')); dismissReferral(); }}
+          onButtonClick={() => { history.push('/referrals'); dismissReferral(); }}
           dismissLabel="Dismiss referral promotion"
           onDismiss={dismissReferral}
         />

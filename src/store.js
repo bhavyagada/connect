@@ -1,26 +1,35 @@
 import * as Redux from 'redux';
-import { connectRouter, routerMiddleware } from 'connected-react-router';
 import thunk from 'redux-thunk';
 import { createBrowserHistory } from 'history';
 
 import rootReducer from './reducers';
 import composeEnhancers from './devtools';
-import { onHistoryMiddleware } from './actions/history';
+import { analyticsEvent } from './actions';
+import { syncStateFromURL } from './actions/history';
 import { analyticsMiddleware } from './analytics';
 
 export const history = createBrowserHistory();
 
 export function createAppStore(appHistory, preloadedState) {
-  return Redux.createStore(
-    connectRouter(appHistory)(rootReducer),
+  const store = Redux.createStore(
+    rootReducer,
     preloadedState,
     composeEnhancers(Redux.applyMiddleware(
-      thunk,
-      onHistoryMiddleware,
-      routerMiddleware(appHistory),
+      thunk.withExtraArgument(appHistory),
       analyticsMiddleware,
     )),
   );
+
+  let pathname = appHistory.location.pathname;
+  appHistory.listen((location) => {
+    const pathnameChanged = pathname !== location.pathname;
+    pathname = location.pathname;
+
+    store.dispatch(analyticsEvent('page_view', { pathname: location.pathname }));
+    if (pathnameChanged) store.dispatch(syncStateFromURL());
+  });
+
+  return store;
 }
 
 const store = createAppStore(history);

@@ -1,7 +1,6 @@
-import { LOCATION_CHANGE, replace } from 'connected-react-router';
 import { parseURL } from '../url';
 import { checkRoutesData, checkLastRoutesData, primeFetchSubscription, fetchDeviceOnline, fetchSharedDevice } from './index';
-import { ACTION_APPLY_DESTINATION, ACTION_STARTUP_DATA } from './types';
+import { ACTION_APPLY_DESTINATION } from './types';
 import { api } from '../api/backend';
 import { webrtcConnectionManager } from '../utils/webrtc';
 import { resetPlayback, selectLoop } from '../timeline/playback';
@@ -17,32 +16,32 @@ const resolveDongleId = (route, state, defaultId) => {
   return device.dongle_id;
 };
 
-export const syncStateFromURL = (defaultDongleId) => async (dispatch, getState) => {
+export const syncStateFromURL = (defaultDongleId) => async (dispatch, getState, history) => {
   const state = getState();
   if (state.devices === null) return;
 
-  const { pathname, search } = state.router.location;
-  const route = parseURL(state.router.location);
+  const { pathname, search } = history.location;
+  const route = parseURL(history.location);
   const dongleId = resolveDongleId(route, state, defaultDongleId);
 
   // normalize URLs
   if (route.page === 'not-found') {
-    return dispatch(replace({ pathname: dongleId ? `/${dongleId}` : '/', search }));
+    return history.replace({ pathname: dongleId ? `/${dongleId}` : '/', search });
   }
   if (route.page === 'root' && dongleId) {
-    return dispatch(replace({ pathname: `/${dongleId}`, search }));
+    return history.replace({ pathname: `/${dongleId}`, search });
   }
   if (route.page === 'drive' && !route.range && pathname !== `/${dongleId}/${route.logId}`) {
-    return dispatch(replace({ pathname: `/${dongleId}/${route.logId}`, search }));
+    return history.replace({ pathname: `/${dongleId}/${route.logId}`, search });
   }
   if (route.page === 'legacy-drive') {
     const logId = await api.routes.getRoutesSegments(dongleId, route.range.start, route.range.end)
       .then((routes) => routes?.[0]?.fullname?.split('|')[1])
       .catch((err) => console.error('Failed to resolve legacy drive URL', err));
     // ignore the result if navigation changed during the request
-    const location = getState().router.location;
+    const location = history.location;
     if (location.pathname !== pathname) return;
-    if (logId) return dispatch(replace({ pathname: `/${dongleId}/${logId}`, search: location.search }));
+    if (logId) return history.replace({ pathname: `/${dongleId}/${logId}`, search: location.search });
   }
 
   const deviceChanged = state.dongleId !== dongleId;
@@ -77,16 +76,4 @@ export const syncStateFromURL = (defaultDongleId) => async (dispatch, getState) 
     dispatch(fetchSharedDevice(dongleId));
   }
   dispatch(checkLastRoutesData());
-};
-
-export const onHistoryMiddleware = ({ dispatch, getState }) => (next) => (action) => {
-  if (!action) return;
-  if (action.type !== ACTION_STARTUP_DATA && action.type !== LOCATION_CHANGE) return next(action);
-
-  const prevPathname = getState().router.location.pathname;
-  const result = next(action);
-  if (action.type === ACTION_STARTUP_DATA || prevPathname !== action.payload.location.pathname) {
-    dispatch(syncStateFromURL(action.devices?.[0]?.dongle_id));
-  }
-  return result;
 };

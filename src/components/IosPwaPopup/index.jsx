@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import localforage from 'localforage';
 import { withStyles, Typography } from '@material-ui/core';
 
@@ -83,7 +83,7 @@ class IosPwaPopup extends Component {
       window.removeEventListener('click', this.onWindowClick);
     }
 
-    if (prevProps.pathname !== this.props.pathname) {
+    if (prevProps.location.pathname !== this.props.location.pathname) {
       this.hide();
     }
   }
@@ -136,8 +136,4 @@ class IosPwaPopup extends Component {
   }
 }
 
-const stateToProps = (state) => ({
-  pathname: state.router.location.pathname,
-});
-
-export default connect(stateToProps)(withStyles(styles)(IosPwaPopup));
+export default withRouter(withStyles(styles)(IosPwaPopup));

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import localforage from 'localforage';
-import { replace } from 'connected-react-router';
 
 import { withStyles, Button, CircularProgress, Modal, Paper, Typography } from '@material-ui/core';
 import 'mapbox-gl/src/css/mapbox-gl.css';
@@ -96,7 +95,7 @@ class ExplorerApp extends Component {
 
     const q = new URLSearchParams(window.location.search);
     if (q.has('r')) {
-      this.props.dispatch(replace(q.get('r')));
+      this.props.history.replace(q.get('r'));
     }
 
     this.props.dispatch(init());

@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { connect } from 'react-redux';
-import { push } from 'connected-react-router';
+import { useHistory } from 'react-router-dom';
 
 import { withStyles } from '@material-ui/core/styles';
 import { Typography, IconButton, AppBar } from '@material-ui/core';
@@ -81,6 +81,7 @@ const AppHeader = ({
   profile, classes, dispatch, drawerIsOpen, showDrawerButton,
   forwardRef, handleDrawerStateChanged, dongleId, referralsOpen,
 }) => {
+  const history = useHistory();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showNewReferralsDot, setShowNewReferralsDot] = useState(() => (
     window.localStorage.getItem(REFERRALS_SEEN_KEY) !== 'true'
@@ -101,14 +102,14 @@ const AppHeader = ({
 
   const openReferrals = useCallback(() => {
     if (referralsOpen) return;
-    dispatch(push('/referrals'));
-  }, [dispatch, referralsOpen]);
+    history.push('/referrals');
+  }, [history, referralsOpen]);
 
   const toggleReferrals = useCallback(() => {
     window.localStorage.setItem(REFERRALS_SEEN_KEY, 'true');
     setShowNewReferralsDot(false);
-    dispatch(push(referralsOpen ? dashboardPath : '/referrals'));
-  }, [dispatch, dashboardPath, referralsOpen]);
+    history.push(referralsOpen ? dashboardPath : '/referrals');
+  }, [history, dashboardPath, referralsOpen]);
 
   const toggleDrawer = useCallback(() => {
     handleDrawerStateChanged(!drawerIsOpen);

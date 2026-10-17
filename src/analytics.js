@@ -1,4 +1,3 @@
-import { LOCATION_CHANGE } from 'connected-react-router';
 import * as Sentry from '@sentry/react';
 
 import MyCommaAuth from '@commaai/my-comma-auth';
@@ -92,12 +91,6 @@ function logAction(action, prevState, state) {
 
   // eslint-disable-next-line default-case
   switch (action.type) {
-    case LOCATION_CHANGE:
-      gtag('event', 'page_view', {
-        page_location: getPageViewEventLocation(action.payload.location.pathname),
-      });
-      return;
-
     case Types.ACTION_STARTUP_DATA:
       gtag('set', {
         user_id: state.profile?.user_id,
@@ -110,7 +103,7 @@ function logAction(action, prevState, state) {
 
       gtag('event', 'page_view', {
         ...params,
-        page_location: getPageViewEventLocation(state.router.location.pathname),
+        page_location: getPageViewEventLocation(action.pathname),
       });
       return;
 
@@ -212,7 +205,13 @@ function logAction(action, prevState, state) {
       return;
 
     case Types.ANALYTICS_EVENT:
-      tag(action.name, action.parameters);
+      if (action.name === 'page_view') {
+        gtag('event', 'page_view', {
+          page_location: getPageViewEventLocation(action.parameters.pathname),
+        });
+      } else {
+        tag(action.name, action.parameters);
+      }
   }
 }
 
