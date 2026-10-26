@@ -1,17 +1,14 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import Drawer from '@material-ui/core/Drawer';
 
 import DeviceList from '../Dashboard/DeviceList';
 
-import { navigateTo } from '../../actions';
-
 const listener = (ev) => ev.stopPropagation();
 
 const AppDrawer = ({
-  dispatch, isPermanent, drawerIsOpen, handleDrawerStateChanged, width,
+  isPermanent, drawerIsOpen, handleDrawerStateChanged, width,
 }) => {
   const contentRef = useRef(null);
 
@@ -26,11 +23,6 @@ const AppDrawer = ({
   const toggleDrawerOff = useCallback(() => {
     handleDrawerStateChanged(false);
   }, [handleDrawerStateChanged]);
-
-  const handleDeviceSelected = useCallback((dongleId) => {
-    dispatch(navigateTo('dashboard', { dongleId }));
-    toggleDrawerOff();
-  }, [dispatch, toggleDrawerOff]);
 
   return (
     <Drawer
@@ -47,10 +39,10 @@ const AppDrawer = ({
               <span className="text-xl font-extrabold">connect</span>
             </Link>
           )}
-        <DeviceList handleDeviceSelected={handleDeviceSelected} />
+        <DeviceList onDeviceSelected={toggleDrawerOff} />
       </div>
     </Drawer>
   );
 };
 
-export default connect()(AppDrawer);
+export default AppDrawer;

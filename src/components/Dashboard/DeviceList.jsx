@@ -112,14 +112,17 @@ class DeviceList extends Component {
   }
 
   renderDevice(device) {
-    const { classes, handleDeviceSelected, profile, dongleId } = this.props;
+    const { classes, dispatch, onDeviceSelected, profile, dongleId } = this.props;
     const isSelectedCls = (dongleId === device.dongle_id) ? 'isSelected' : '';
     const offlineCls = !deviceIsOnline(device) ? classes.deviceOffline : '';
     return (
       <a
         key={device.dongle_id}
         className={ `${classes.device} ${isSelectedCls}` }
-        onClick={ filterRegularClick(() => handleDeviceSelected(device.dongle_id)) }
+        onClick={ filterRegularClick(() => {
+          dispatch(navigateTo('dashboard', { dongleId: device.dongle_id }));
+          onDeviceSelected();
+        })}
         href={ `/${device.dongle_id}` }
       >
         <div className={classes.deviceInfo}>
