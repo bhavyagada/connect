@@ -1,5 +1,3 @@
-import { connect } from 'react-redux';
-
 import DriveList from './DriveList';
 import Navigation from '../Navigation';
 import Promotions from '../Promotions';
@@ -21,9 +19,4 @@ const Dashboard = ({ device, dongleId }) => {
   );
 };
 
-const stateToProps = (state) => ({
-  dongleId: state.dongleId,
-  device: state.device,
-});
-
-export default connect(stateToProps)(Dashboard);
+export default Dashboard;

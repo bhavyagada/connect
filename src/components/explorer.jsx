@@ -219,13 +219,6 @@ class ExplorerApp extends Component {
     const drawerStyles = {
       minHeight: `calc(100vh - ${headerHeight}px)`,
     };
-    const primeView = (
-      <div className="relative flex flex-col">
-        <Suspense fallback={<FullPageLoading />}>
-          {device ? <Prime /> : <FullPageLoading />}
-        </Suspense>
-      </div>
-    );
 
     return (
       <div className={classes.app}>
@@ -251,8 +244,14 @@ class ExplorerApp extends Component {
               {referralsOpen ? <Referrals profile={profile} />
                 : noDevicesUpsell ? <NoDeviceUpsell />
                 : page === 'drive' ? <DriveView />
-                : page === 'prime' ? primeView
-                : <Dashboard />}
+                : page === 'prime' ? (
+                    <div className="relative flex flex-col">
+                      <Suspense fallback={<FullPageLoading />}>
+                        {device ? <Prime /> : <FullPageLoading />}
+                      </Suspense>
+                    </div>
+                  )
+                : <Dashboard device={device} dongleId={dongleId} />}
             </div>
             <IosPwaPopup />
             <Modal open={ Boolean(pairLoading || pairError || pairDongleId) } onClose={ this.closePair }>
