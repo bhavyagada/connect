@@ -4,8 +4,8 @@ import Promotions from '../Promotions';
 import DeviceInfo from '../DeviceInfo';
 import FullPageLoading from '../FullPageLoading';
 
-const Dashboard = ({ device, dongleId }) => {
-  if (!device || !dongleId) {
+const Dashboard = ({ device }) => {
+  if (!device) {
     return <FullPageLoading />;
   }
 

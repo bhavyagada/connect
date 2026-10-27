@@ -152,20 +152,20 @@ class ExplorerApp extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.dongleId && prevProps.dongleId !== this.props.dongleId) {
-      if (webrtcConnectionManager.dongleId !== this.props.dongleId) {
-        webrtcConnectionManager.disconnect();
-      }
+    const { pathname, zoom, dongleId } = this.props;
+
+    if (prevProps.dongleId && prevProps.dongleId !== dongleId && webrtcConnectionManager.dongleId !== dongleId) {
+      webrtcConnectionManager.disconnect();
     }
 
-    if (prevProps.pathname !== this.props.pathname) {
+    if (prevProps.pathname !== pathname) {
       this.setState({ drawerIsOpen: false });
     }
 
-    if (!prevProps.zoom && this.props.zoom) {
+    if (!prevProps.zoom && zoom) {
       this.props.dispatch(play());
     }
-    if (prevProps.zoom && !this.props.zoom) {
+    if (prevProps.zoom && !zoom) {
       this.props.dispatch(pause());
     }
   }
@@ -251,7 +251,7 @@ class ExplorerApp extends Component {
                       </Suspense>
                     </div>
                   )
-                : <Dashboard device={device} dongleId={dongleId} />}
+                : <Dashboard device={device} />}
             </div>
             <IosPwaPopup />
             <Modal open={ Boolean(pairLoading || pairError || pairDongleId) } onClose={ this.closePair }>
