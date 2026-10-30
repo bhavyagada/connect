@@ -251,7 +251,7 @@ class ExplorerApp extends Component {
                       </Suspense>
                     </div>
                   )
-                : <Dashboard device={device} />}
+                : device ? <Dashboard /> : <FullPageLoading />}
             </div>
             <IosPwaPopup />
             <Modal open={ Boolean(pairLoading || pairError || pairDongleId) } onClose={ this.closePair }>

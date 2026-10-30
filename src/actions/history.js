@@ -37,26 +37,27 @@ export const syncStateFromURL = () => async (dispatch, getState) => {
   });
 
   const newState = getState();
+
   const playbackChanged = state.zoom !== newState.zoom || state.selectedRouteId !== newState.selectedRouteId;
   if (playbackChanged) {
     dispatch(resetPlayback());
     dispatch(selectLoop(newState.zoom?.start, newState.zoom?.end));
   }
 
-  // initialize the newly selected device.
-  if (state.dongleId !== destination.dongleId) {
+  // initialize the newly selected device
+  if (state.dongleId !== newState.dongleId) {
     if ((newState.device && !newState.device.shared) || state.profile?.superuser) {
       dispatch(primeFetchSubscription());
-      dispatch(fetchDeviceOnline(destination.dongleId));
+      dispatch(fetchDeviceOnline(newState.dongleId));
     }
 
-    const isListed = state.devices?.some((device) => device.dongle_id === destination.dongleId);
+    const isListed = state.devices?.some((device) => device.dongle_id === newState.dongleId);
     if (!isListed && api.auth.isAuthenticated()) {
-      dispatch(fetchSharedDevice(destination.dongleId));
+      dispatch(fetchSharedDevice(newState.dongleId));
     }
 
     dispatch(checkLastRoutesData());
-  } else if (destination.logId) { // load drive on current device
+  } else if (newState.selectedRouteId) { // load drive data on the current device
     dispatch(checkRoutesData());
   }
 };
