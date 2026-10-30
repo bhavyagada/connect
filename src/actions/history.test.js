@@ -49,7 +49,9 @@ describe('history middleware', () => {
   });
 
   it('selects a changed device and refreshes routes', async () => {
-    const { store } = create({ ...baseState, router: { location: { pathname: `/${OTHER}`, search: '' } } });
+    const state = { ...baseState, router: { location: { pathname: `/${OTHER}`, search: '' } } };
+    const { store } = create(state);
+    store.getState.mockReturnValueOnce(state).mockReturnValue({ ...state, dongleId: OTHER });
     await syncStateFromURL()(store.dispatch, store.getState);
     expect(store.dispatch).toHaveBeenCalledWith({
       type: ACTION_APPLY_DESTINATION,
